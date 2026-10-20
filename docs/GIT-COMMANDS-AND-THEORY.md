@@ -1,138 +1,186 @@
 # Git and Linux Commands – Notes
 
-## 📚 Table of Contents
+## Table of Contents
 
-| S.No. | Topic                       | Short Description                                                                  |
-| ----- | --------------------------- | ---------------------------------------------------------------------------------- |
-| 1     | File and Directory Commands | Create, read, append, list, and delete files and directories using Linux commands. |
-| 2     | Git History and Changes     | View commit history and compare file changes using Git commands.                   |
-| 3     | Tracking Empty Directories  | Use `.gitkeep` to track directories containing no other files.                     |
-| 4     | Git Workflow and Stages     | Understand the Working Directory, Staging Area, and Repository.                    |
-| 5     | Git Restore and Unstaging   | Unstage files and discard unstaged changes.                                        |
-| 6     | Git Reset                   | Understand soft, mixed, and hard resets to undo commits and manage changes.        |
-| 7     | Git Safety Practices        | Understand data-loss risks and precautions when using destructive commands.        |
+| Section | Content |
+|---|---|
+| 1 | File and Directory Commands |
+| 2 | Git History and File Changes |
+| 3 | Tracking Empty Directories |
+| 4 | The Three Main Areas in Git |
+| 5 | Git Restore and Unstaging |
+| 6 | Git Reset Commands |
+| 7 | Quick Comparison: Git Reset |
+| 8 | Git Revert |
+| 9 | Git Branch Commands |
+| 10 | Git Merge Commands and Types |
 
 ---
 
 ## 1. File and Directory Commands
 
-| Command                     | Explanation                                                                                                                    | Example / Output                                                                                    |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
-| `echo "hello" > file.txt`   | Creates `file.txt` and writes `hello` into it. If the file already exists, its previous content is overwritten.                | `hello`                                                                                             |
-| `cat file.txt`              | Displays the contents of a file in the terminal.                                                                               | Displays `hello`                                                                                    |
-| `echo "hello1" >> file.txt` | Appends new content to the file without removing its existing content.                                                         | Adds `hello1` on a new line only if you include `\n` or use a separate command that adds a newline. |
-| `ls -a`                     | Lists all files and directories, including hidden ones.                                                                        | Displays files such as `.git` and `.gitignore`.                                                     |
-| `rm -rf *`                  | Deletes non-hidden files and directories in the current directory, including nested contents, without asking for confirmation. | Dangerous: Deleted data may be difficult or impossible to recover.                                  |
+### 1.1 Basic Commands
 
-### Understanding command components
+| Command | Explanation |
+|---|---|
+| `echo "hello" > file.txt` | Creates a file or overwrites its existing content. |
+| `cat file.txt` | Displays file contents. |
+| `echo "hello1" >> file.txt` | Appends content to a file. |
+| `ls -a` | Lists all files, including hidden files. |
+| `rm -rf *` | Deletes non-hidden files and directories in the current directory, including nested contents. |
 
-| Component | Meaning                                                              |
-| --------- | -------------------------------------------------------------------- |
-| `echo`    | Prints text to the terminal or sends it to a file using redirection. |
-| `>`       | Redirects output to a file, replacing its existing content.          |
-| `>>`      | Redirects output to a file by appending to its existing content.     |
-| `cat`     | Displays or combines file contents.                                  |
-| `ls`      | Lists directory contents.                                            |
-| `-a`      | Shows all entries, including hidden entries.                         |
-| `rm`      | Removes files or directories.                                        |
-| `-r`      | Removes directories recursively, including their contents.           |
-| `-f`      | Forces removal without prompting for confirmation in normal cases.   |
-| `*`       | A wildcard matching non-hidden names in the current directory.       |
+### 1.2 Understanding Command Components
 
-Important: `rm -rf *` does not normally delete hidden entries such as `.git`. Be extremely careful when running destructive commands.
+| Component | Meaning |
+|---|---|
+| `echo` | Prints text or sends it to a file. |
+| `>` | Overwrites file content. |
+| `>>` | Appends content to a file. |
+| `cat` | Displays file contents. |
+| `ls` | Lists directory contents. |
+| `-a` | Includes hidden entries. |
+| `rm` | Removes files or directories. |
+| `-r` | Removes directories recursively. |
+| `-f` | Forces removal without normal confirmation prompts. |
+| `*` | Matches non-hidden names in the current directory. |
 
-## 2. Git Commands
+**Warning:** `rm -rf *` is destructive and does not normally delete hidden entries such as `.git`.
 
-| Command                         | Purpose                     | Explanation                                                                                   |
-| ------------------------------- | --------------------------- | --------------------------------------------------------------------------------------------- |
-| `git log`                       | View commit history         | Displays commit details, including commit IDs, authors, dates, and messages.                  |
-| `git log --oneline`             | View compact commit history | Displays each commit in a single line.                                                        |
-| `git diff`                      | View unstaged changes       | Shows the exact line-by-line differences between your working directory and the staging area. |
-| `git restore filename`          | Discard unstaged changes    | Restores a file to its staged version, or its last committed version if it is not staged.     |
-| `git restore --staged filename` | Unstage a file              | Removes the file from the staging area without discarding its working-directory changes.      |
+---
 
-### What is `.gitkeep`?
+## 2. Git History and File Changes
 
-Git does not track empty directories by default. A common convention is to create a file named `.gitkeep` inside an otherwise empty directory so that Git can track the directory through that file.
+### 2.1 Viewing Commit History
 
-Example folder structure:
+| Command | Purpose |
+|---|---|
+| `git log` | Displays detailed commit history. |
+| `git log --oneline` | Displays compact commit history. |
 
-```
+### 2.2 Viewing File Changes
+
+| Command | Purpose |
+|---|---|
+| `git diff` | Shows unstaged changes between the working directory and staging area. |
+
+---
+
+## 3. Tracking Empty Directories
+
+### 3.1 What Is `.gitkeep`?
+
+Git does not track empty directories by default. A common convention is to add a `.gitkeep` file to an otherwise empty directory.
+
+### 3.2 Example Folder Structure
+
+```text
 project/
 ├── src/
 │   └── .gitkeep
 └── README.md
 ```
 
-`.gitkeep` is not a special Git command or feature. It is simply a conventionally named placeholder file.
+**Note:** `.gitkeep` is not a special Git command or feature. It is a conventionally named placeholder file.
 
-## 3. The Three Main Areas in Git
+---
 
-Git manages your changes through three main areas.
+## 4. The Three Main Areas in Git
 
-1\. Working Directory (WD)
+### 4.1 Working Directory (WD)
 
-Where you create or modify files.
+The location where you create, modify, or delete files.
 
-`git add filename`
+```bash
+git add filename
+```
 
-2\. Staging Area (SA)
+This stages the selected changes.
 
-Changes selected for the next commit.
+### 4.2 Staging Area (SA)
 
-`git commit -m "message"`
+Contains changes selected for the next commit.
 
-3\. Local Repository (Repo)
+```bash
+git commit -m "message"
+```
+
+### 4.3 Local Repository (Repo)
 
 Stores committed snapshots and project history.
 
-## 4. Git Reset Commands
+**Workflow:**
 
-`git reset` moves the current branch reference to an earlier commit. Depending on the option used, it also changes the staging area and working directory.
-
-### A. Soft Reset
-
-Command:
-
+```text
+Working Directory
+       |
+    git add
+       v
+  Staging Area
+       |
+   git commit
+       v
+ Local Repository
 ```
+
+---
+
+## 5. Git Restore and Unstaging
+
+### 5.1 Discard Unstaged Changes
+
+```bash
+git restore filename
+```
+
+Restores the file to its staged version, or its last committed version if no staged version exists.
+
+### 5.2 Unstage a File
+
+```bash
+git restore --staged filename
+```
+
+Removes the file from the staging area without discarding its working-directory changes.
+
+---
+
+## 6. Git Reset Commands
+
+`git reset` moves the current branch reference to an earlier commit. Its effect on the staging area and working directory depends on the option used.
+
+### 6.1 Soft Reset
+
+**Command:**
+
+```bash
 git reset --soft HEAD~1
 ```
 
 - Moves the current branch back by one commit.
-- Keeps the changes from that commit in the staging area.
+- Keeps the changes staged.
 - Does not discard the changes.
 
-You can replace `1` with another number, such as `HEAD~2`, to move back two commits.
+You can use `HEAD~2` to move back two commits.
 
-Movement
+**To unstage the changes:**
 
-Before reset: changes are committed.
-
-Repository
-
-Staging Area
-
-The changes from the removed commit remain staged.
-
-To unstage the changes afterward:
-
-```
+```bash
 git restore --staged filename
 ```
 
-This moves the changes from the staging area back to the working directory without deleting them.
+The changes remain in the working directory.
 
-### B. Mixed Reset (Default)
+### 6.2 Mixed Reset (Default)
 
-Command:
+**Command:**
 
-```
+```bash
 git reset HEAD~1
 ```
 
-This is equivalent to:
+Equivalent to:
 
-```
+```bash
 git reset --mixed HEAD~1
 ```
 
@@ -140,52 +188,122 @@ git reset --mixed HEAD~1
 - Resets the staging area.
 - Keeps the changes in the working directory as unstaged changes.
 
-Movement
+You can stage the changes again:
 
-Repository
-
-Working Directory
-
-The changes remain available but are no longer staged.
-
-You can stage the changes again with `git add filename` or discard an unstaged file's changes using:
-
+```bash
+git add filename
 ```
+
+To discard unstaged changes to a file:
+
+```bash
 git restore filename
 ```
 
-Warning: The latter discards the file's unstaged changes. If you have both staged and unstaged changes, it does not remove the staged version of those changes.
+### 6.3 Hard Reset
 
-### C. Hard Reset
+**Command:**
 
-Command:
-
-```
+```bash
 git reset --hard HEAD~1
 ```
 
 - Moves the current branch back by one commit.
 - Resets the staging area.
-- Resets tracked files in the working directory to match the target commit.
+- Resets tracked working-directory files to match the target commit.
 
-Movement
+**Warning:** Uncommitted changes to tracked files can be permanently lost. Untracked files and directories are not normally deleted by `git reset --hard`.
 
-Repository
+---
 
-Discard changes
+## 7. Quick Comparison: Git Reset
 
-Danger: Uncommitted changes to tracked files can be permanently lost.
+### 7.1 Soft vs. Mixed vs. Hard Reset
 
-Hard reset does not normally delete untracked files and directories. However, changes discarded by a hard reset may be difficult to recover. Use it only when you understand which changes will be lost.
+| Feature | `--soft` | `--mixed` (Default) | `--hard` |
+|---|---|---|---|
+| Moves branch to an earlier commit | Yes | Yes | Yes |
+| Resets staging area | No | Yes | Yes |
+| Resets tracked working files | No | No | Yes |
+| Changes remain staged | Yes | No | No |
+| Changes remain in working directory | Yes | Yes | No, tracked files are reset |
+| Risk of losing uncommitted changes | Low | Low | High |
 
-## 5. Quick Comparison: Git Reset
+**Remember:**
 
-| Feature                             | `--soft` | `--mixed` (default) | `--hard`                    |
-| ----------------------------------- | -------- | ------------------- | --------------------------- |
-| Moves branch to an earlier commit   | Yes      | Yes                 | Yes                         |
-| Resets staging area                 | No       | Yes                 | Yes                         |
-| Resets tracked working files        | No       | No                  | Yes                         |
-| Changes remain staged               | Yes      | No                  | No                          |
-| Changes remain in working directory | Yes      | Yes                 | No, tracked files are reset |
-| Risk of losing uncommitted changes  | Low      | Low                 | High                        |
+- `--soft` → Changes remain staged.
+- `--mixed` → Changes remain unstaged.
+- `--hard` → Tracked files are reset; uncommitted changes may be lost.
 
+---
+
+## 8. Git Revert
+
+- **`git revert commit_id`** – Creates a new commit that reverses the changes introduced by the specified commit. The original commit and other commits stay in history. Use this command to undo a commit that has already been pushed to a GitHub repository.
+
+## 9. Git Branch Commands
+
+![Git Branch Commands](./asset/git-commands-and-theory-images//merging-concepts.png)
+
+- **`git branch branch_name`** – Creates a new branch.
+- **`git switch branch_name`** – Switches to an existing branch.
+- **`git switch -c branch_name`** – Creates a new branch and immediately switches to it.
+- **`git checkout -b branch_name`** – Alternative command to create and switch to a new branch.
+- **`git branch -d branch_name`** – Deletes a safely deletable, merged local branch.
+
+---
+
+## 10. Git Merge Commands and Types
+
+**`git merge branch_name`** – Merges the specified branch into the currently checked-out branch.
+
+### 10.1 Fast-Forward Merge
+
+**Command:**
+
+```bash
+git merge branch_name
+```
+
+**Meaning:** Moves the current branch pointer forward when it has no new commits that diverge from the feature branch.
+
+### 10.2 Three-Way Merge
+
+**Command:**
+
+```bash
+git merge branch_name
+```
+
+**Meaning:** Combines changes when both branches have diverged from their common ancestor. Git normally creates a merge commit automatically.
+
+To provide a message for the merge commit:
+
+```bash
+git merge branch_name -m "merge feature branch"
+```
+
+**Note:** `-m` specifies the merge commit message; it does not itself enable three-way merging.
+
+### 10.3 Squash Merge
+
+**Command:**
+
+```bash
+git merge --squash branch_name
+git commit -m "merge feature changes"
+```
+
+**Meaning:** Combines the net changes from the feature branch into one staged change on the current branch. The second command creates the single commit.
+
+### 10.4 Octopus Merge
+
+**Command:**
+
+```bash
+git merge branch_name1 branch_name2 ... branch_namen
+```
+
+**Meaning:** Merges multiple branches into the current branch in one operation, usually when their changes can be combined without conflicts.
+
+**Remember:** Run merge commands from the branch that should receive the changes, such as `main`.
