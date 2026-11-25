@@ -1,6 +1,6 @@
 # Git and Linux Commands – Notes
 
-## Table of Contents
+## Table of Contents:-
 
 | Section | Content |
 |---|---|
