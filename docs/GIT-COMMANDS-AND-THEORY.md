@@ -1,4 +1,4 @@
-# Git and Linux Commands – Notes
+# Git and Linux Commands – Notes:-
 
 ## Table of Contents:-
 
